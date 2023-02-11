@@ -12,12 +12,12 @@ import java.awt.event.KeyEvent;
 public class sendMsg {
 
     public static void main(String[] args) throws AWTException {
-        String sentence = "浅淡世界，伴随最后的词语，静静地绽放散落";// 定义要发送的话
+        String sentence = "~青春璀璨樱花草，那是我们相爱的记号~";// 定义要发送的话
         Robot robot = new Robot();// 创建Robot对象
-        robot.delay(3000);//预留出打开窗口的时间
+        robot.delay(2500);//预留出打开窗口的时间
         Clipboard clip = Toolkit.getDefaultToolkit().getSystemClipboard();
         //String[] authors = sentence.split("[,]");// 字符串根据,分割
-        for (int j = 0;j<45; j++) {//循环次数
+        for (int j = 0;j<35; j++) {//循环次数
             //for (int i = 0; i < authors.length; i++) {
             //    String sentencet = authors[i];
                 String sentencet = sentence;
@@ -28,7 +28,7 @@ public class sendMsg {
                 robot.keyPress(KeyEvent.VK_V);// 按下V键
                 robot.keyRelease(KeyEvent.VK_CONTROL);// 释放ctrl按键
                 //robot.delay(5300);// 延迟一秒再发送
-                robot.delay(6000);// 延迟一秒再发送
+                robot.delay(6200);// 延迟一秒再发送
                 robot.keyPress(KeyEvent.VK_ENTER);// 回车
             //}
         }

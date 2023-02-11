@@ -445,6 +445,8 @@ public class part_1 {
         }
     }
 
+
+
     /**前缀和：
      * 主要思想：假设输入有N个数，用一个N+1的数组来保存从0~N的累加合   ==> Si = a1 + a2 + ... + ai
      *      则具体计算[l, r]范围的数字时 = S[r]-S[l-1];
@@ -471,7 +473,6 @@ public class part_1 {
         sc.close();
     }
 
-
     /**二维前缀和
      */
     public static void prefix_add_2D(){
@@ -495,15 +496,17 @@ public class part_1 {
         sc.close();
     }
 
+
     /**差分 --- 原数组的名称，即
      * 存在a1、a2、...，构造b1、b2、...
      * 使得ai = b1 + b2 + ... + bi
      * 其中b1 = a1、b2 = a2 - a1、...、bn = an - an-1
      * b为a的差分、a为b的前缀和
      */
+    /**一维差分
+     */
     static int[] a = new int[100010];
     static int[] b = new int[100010];
-
     public static void difference(){
         Scanner sc = new Scanner(System.in);
 
@@ -535,6 +538,8 @@ public class part_1 {
         b[r+1] -= c;
     }
 
+    /**二维差分
+     */
     static int[][] c = new int[1010][1010];
     static int[][] d = new int[1010][1010];
     public static void difference_2d(){
@@ -566,7 +571,6 @@ public class part_1 {
             System.out.println();
         }
     }
-
     public static void insert_2d(int x1, int y1, int x2, int y2, int c){
         d[x1][y1] += c;
         d[x2+1][y1] -= c;
@@ -574,5 +578,167 @@ public class part_1 {
         d[x2+1][y2+1] += c;
     }
 
+    /**
+     * 双指针问题
+     */
+    /**最长连续不重复子序列
+     * 规律：比对过程中，随着i往后移动，j也只能往后移动/不移动
+     */
+    public static void quest_799(){
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        for (int i=0;i<n;i++) a[i] = sc.nextInt();
+
+        int res = 0;
+        for (int i = 0 , j = 0; i < n; i++) {
+            b[a[i]]++;
+            while(b[a[i]]>1) {
+                b[a[j]]--;
+                j++;
+            }
+            res = Math.max(res, i-j+1);
+        }
+        System.out.println(res);
+    }
+
+
+    /**
+     * 位运算
+     */
+    public static void bit_cal(){
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+
+        for (int i = 0; i < n; i++) {
+            int res = 0;
+            int a = sc.nextInt();
+            while (a>0){
+                a -= lowbit(a);
+                res++;
+            }
+            System.out.print(res + " ");
+        }
+    }
+    public static int lowbit(int a){
+        return a & -a;
+    }
+
+
+    /**
+     * 离散化
+     */
+    public static void discrete(){
+        Scanner sc = new Scanner(System.in);
+        int n=sc.nextInt(),m= sc.nextInt();
+
+        List<Pair> add = new ArrayList<>();
+        List<Pair> query = new ArrayList<>();
+        List<Integer> all = new ArrayList<>();
+
+        for (int i = 0; i < n; i++){
+            int x = sc.nextInt();
+            int c = sc.nextInt();
+            add.add(new Pair(x, c));
+            all.add(x);
+        }
+
+        for (int i = 0; i < m; i++) {
+            int l = sc.nextInt();
+            int r = sc.nextInt();
+            query.add(new Pair(l, r));
+            all.add(l);
+            all.add(r);
+        }
+
+        Collections.sort(all);
+        int unique = unique(all);
+        all = all.subList(0, unique);
+
+        for (Pair item : add) {
+            int index = find(item.first, all);
+            a[index] += item.second;
+        }
+
+        for (int i = 1; i <= all.size(); i++) {
+            b[i] = b[i-1] + a[i];
+        }
+
+        for (Pair item : query) {
+            int l = find(item.first, all);
+            int r = find(item.second, all);
+            System.out.println(b[r] - b[l-1]);
+        }
+    }
+    public static int find(int x, List<Integer> list){
+        int l=0, r=list.size()-1;
+        while (l<r){
+            int mid = l+r>>1;
+            if (list.get(mid)>=x) r = mid;
+            else l = mid+1;
+        }
+        return l+1;
+    }
+    public static int unique(List<Integer> list){
+        int j = 0;
+        for (int i = 0; i < list.size(); i++) {
+            if (i==0 || list.get(i)!= list.get(i-1)){
+                list.set(j, list.get(i));
+                j++;
+            }
+        }
+        return j;
+    }
+
+    /**
+     * 区间和
+     */
+    public static void interval_add(){
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+
+        List<Pair> list = new ArrayList<>();
+
+        for (int i = 0; i < n; i++)
+            list.add(new Pair(sc.nextInt(), sc.nextInt()));
+
+        // 复习：忘记排序
+        list.sort(new Comparator<Pair>() {
+            @Override
+            public int compare(Pair o1, Pair o2) {
+                if (o1.first!=o2.first) return o1.first - o2.first;
+                else return o1.second - o2.second;
+            }
+        });
+
+        int l= (int) -2e9, r= (int) -2e9;
+        List<Pair> result = new ArrayList<>();
+
+        for (Pair item : list) {
+            if (item.first > r){
+                if (l != -2e9)
+                    result.add(new Pair(l, r));
+                l = item.first;
+                r = item.second;
+            }else
+                r = Math.max(r, item.second);
+        }
+
+        if (l != -2e9)
+            result.add(new Pair(l, r));
+
+        System.out.println(result.size());
+    }
+    static class Pair{
+        public int first;
+        public int second;
+        public Pair(int x, int c){
+            this.first = x;
+            this.second = c;
+        }
+    }
+    
+    
 
 }
+
+
